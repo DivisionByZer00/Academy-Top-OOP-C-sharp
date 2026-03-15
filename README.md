@@ -316,7 +316,7 @@ Console.WriteLine($"Дата: {DateTime.Now}");
 ***Задание:*** Вам предстоит создать небольшую консольную программу и написать для нее набор unit-тестов. Вы будете тестировать класс NotificationService, который зависит от двух внешних сервисов (IUserRepository и IMessageSender).    
 Ваша главная задача — протестировать логику NotificationService в полной изоляции, используя mock-объекты (с помощью библиотеки Moq) для имитации его зависимостей.
 
-***Логика работы программы***    
+***Логика работы программы***
 
 Интерфейсы зависимостей: Сначала создайте два интерфейса, от которых будет зависеть ваш сервис:    
 public interface IUserRepository    
@@ -372,7 +372,7 @@ _messageSender.SendMessage(user.Email, $"Уважаемый {user.Name}, {messag
 ***Задание:*** Вам предстоит написать набор unit-тестов для класса CrmFacade из нашего итогового проекта.    
 Ваша задача — протестировать метод RegisterNewClientWithFirstOrder в полной изоляции, используя продвинутые возможности библиотеки Moq для точной проверки взаимодействий между фасадом и его зависимостями.
 
-***Логика работы программы***    
+***Логика работы программы***
 
 Вы будете тестировать уже существующий класс CrmFacade. Напомним его структуру:    
 public class CrmFacade : ICrmFacade    
@@ -389,7 +389,7 @@ public void RegisterNewClientWithFirstOrder(string clientName, stringclient Emai
 var client = _clientWriter.AddClient(clientName, clientEmail);    
 _orderWriter.AddOrderForClient(client.Id, orderDescription, orderAmount);    
 }    
-}    
+}
 
 Задачи для тестирования:
 - Создайте или используйте существующий тестовый проект xUnit с подключенными Moq и ссылкой на основной проект.
