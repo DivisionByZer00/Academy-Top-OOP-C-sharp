@@ -17,8 +17,7 @@
 
 ### Тема: "Наследование. Построение иерархий и переиспользование кода"
 
-***Задание:*** Спроектировать и реализовать простую модель для расчета заработной платы разных типов сотрудников в компании. Необходимо построить иерархию классов, где Manager и Developer являются наследниками общего класса Employee, и продемонстрировать полиморфную работу с
-ними для расчета и вывода зарплаты каждого сотрудника.
+***Задание:*** Спроектировать и реализовать простую модель для расчета заработной платы разных типов сотрудников в компании. Необходимо построить иерархию классов, где Manager и Developer являются наследниками общего класса Employee, и продемонстрировать полиморфную работу с ними для расчета и вывода зарплаты каждого сотрудника.
 
 ***Логика работы программы***
 - **Базовый класс Employee:** необходимо реализовать базовый класс для всех сотрудников. Он должен содержать общие свойства Name и BaseSalary, а также виртуальный метод CalculateMonthlySalary(), который по умолчанию возвращает базовую зарплату.
@@ -122,7 +121,7 @@ public class OrderProcessor
 - OrderRepository: Должен отвечать только за сохранение заказа (например, в файл).
 - NotificationService: Должен отвечать только за отправку уведомлений пользователю.
 
-**Класс-оркестратор:** Исходный класс OrderProcessor (или новый) должен стать дирижером. Его единственной задачей будет координация работы валидатора, репозитория и сервиса ууведомлений.
+**Класс-оркестратор:** Исходный класс OrderProcessor (или новый) должен стать дирижером. Его единственной задачей будет координация работы валидатора, репозитория и сервиса уведомлений.
 
 ## Homework 08
 
@@ -293,20 +292,20 @@ public class OrderProcessor
 **Исходный код:** Вы должны начать с предоставленного ниже "класса-бога". Ваша задача — не изменить его внешнее поведение, а улучшить внутреннюю структуру.    
 public class GodLibrary    
 {    
-public void Process()    
-{    
-// Логика создания    
-var book1 = new { Title = "Война и мир" };    
-var book2 = new { Title = "Преступление и наказание" };    
-var member = new { Name = "Иван" };    
-// Бизнес-логика: выдача книги    
-Console.WriteLine($"Читатель {member.Name} взял книгу '{book1.Title}'");    
-// Логика отображения    
-Console.WriteLine("\n--- Информация о выдаче ---");    
-Console.WriteLine($"Книга: {book1.Title}");    
-Console.WriteLine($"Выдана читателю: {member.Name}");    
-Console.WriteLine($"Дата: {DateTime.Now}");    
-}    
+  public void Process()    
+  {    
+  // Логика создания    
+  var book1 = new { Title = "Война и мир" };    
+  var book2 = new { Title = "Преступление и наказание" };    
+  var member = new { Name = "Иван" };    
+  // Бизнес-логика: выдача книги    
+  Console.WriteLine($"Читатель {member.Name} взял книгу '{book1.Title}'");    
+  // Логика отображения    
+  Console.WriteLine("\n--- Информация о выдаче ---");    
+  Console.WriteLine($"Книга: {book1.Title}");    
+  Console.WriteLine($"Выдана читателю: {member.Name}");    
+  Console.WriteLine($"Дата: {DateTime.Now}");    
+  }    
 }
 
 ## Homework 19
@@ -321,37 +320,37 @@ Console.WriteLine($"Дата: {DateTime.Now}");
 Интерфейсы зависимостей: Сначала создайте два интерфейса, от которых будет зависеть ваш сервис:    
 public interface IUserRepository    
 {    
-User GetUserById(int userId);    
+  User GetUserById(int userId);    
 }    
 public interface IMessageSender    
 {    
-void SendMessage(string recipient, string message);    
+  void SendMessage(string recipient, string message);    
 }    
 Модель User: Простой класс для хранения данных пользователя.    
 public class User    
 {    
-public int Id { get; set; }    
-public string Name { get; set; }    
-public string Email { get; set; }    
+  public int Id { get; set; }    
+  public string Name { get; set; }    
+  public string Email { get; set; }    
 }    
 Класс NotificationService (System Under Test): Это основной класс, логику которого вы будете тестировать. Он принимает зависимости через конструктор.    
 public class NotificationService    
 {    
-private readonly IUserRepository _userRepository;    
-private readonly IMessageSender _messageSender;    
-public NotificationService(IUserRepository userRepository, IMessageSender messageSender)    
-{    
-_userRepository = userRepository;    
-_messageSender = messageSender;    
-}    
-public void NotifyUser(int userId, string message)    
-{    
-var user = _userRepository.GetUserById(userId);    
-if (user != null)    
-{    
-_messageSender.SendMessage(user.Email, $"Уважаемый {user.Name}, {message}");    
-}    
-}    
+  private readonly IUserRepository _userRepository;    
+  private readonly IMessageSender _messageSender;    
+  public NotificationService(IUserRepository userRepository, IMessageSender messageSender)    
+  {    
+    _userRepository = userRepository;    
+    _messageSender = messageSender;    
+  }    
+  public void NotifyUser(int userId, string message)    
+  {    
+    var user = _userRepository.GetUserById(userId);    
+    if (user != null)    
+    {    
+      _messageSender.SendMessage(user.Email, $"Уважаемый {user.Name}, {message}");    
+    }    
+  }    
 }
 
 Задачи для тестирования:
@@ -377,18 +376,18 @@ _messageSender.SendMessage(user.Email, $"Уважаемый {user.Name}, {messag
 Вы будете тестировать уже существующий класс CrmFacade. Напомним его структуру:    
 public class CrmFacade : ICrmFacade    
 {    
-private readonly IClientWriter _clientWriter;    
-private readonly IOrderWriter _orderWriter;    
-public CrmFacade(IClientWriter clientWriter, IOrderWriter orderWriter)    
-{    
-_clientWriter = clientWriter;    
-_orderWriter = orderWriter;    
-}    
-public void RegisterNewClientWithFirstOrder(string clientName, stringclient Email, string orderDescription, decimal orderAmount)    
-{    
-var client = _clientWriter.AddClient(clientName, clientEmail);    
-_orderWriter.AddOrderForClient(client.Id, orderDescription, orderAmount);    
-}    
+  private readonly IClientWriter _clientWriter;    
+  private readonly IOrderWriter _orderWriter;    
+  public CrmFacade(IClientWriter clientWriter, IOrderWriter orderWriter)    
+  {    
+    _clientWriter = clientWriter;    
+    _orderWriter = orderWriter;    
+  }    
+  public void RegisterNewClientWithFirstOrder(string clientName, stringclient Email, string orderDescription, decimal orderAmount)    
+  {    
+    var client = _clientWriter.AddClient(clientName, clientEmail);    
+    _orderWriter.AddOrderForClient(client.Id, orderDescription, orderAmount);    
+  }    
 }
 
 Задачи для тестирования:
@@ -417,36 +416,36 @@ _orderWriter.AddOrderForClient(client.Id, orderDescription, orderAmount);
 // "Плохой" код для рефакторинга    
 public class UserValidator    
 {    
-// Этот метод слишком длинный и делает слишком много    
-public bool ValidateUser(string username, string email, string phone, int age)    
-{    
-// Проверка имени    
-if (string.IsNullOrEmpty(username) || username.Length > 50)    
-{    
-Console.WriteLine("Ошибка: Имя пользователя некорректно.");    
-return false;    
-}    
-// Проверка email    
-if (!email.Contains("@") || !email.Contains("."))    
-{    
-Console.WriteLine("Ошибка: Email должен содержать '@' и '.'");    
-return false;    
-}    
-// Проверка телефона (упрощенная)    
-if (phone.Length != 11 || !phone.All(char.IsDigit))    
-{    
-Console.WriteLine("Ошибка: Телефон должен состоять из 11 цифр.");    
-return false;    
-}    
-// Проверка возраста    
-if (age < 18 || age > 99) // "Магические числа" 18 и 99    
-{    
-Console.WriteLine("Ошибка: Возраст должен быть в диапазоне от 18 до 99.");    
-return false;    
-}    
-Console.WriteLine("Пользователь успешно прошел валидацию!");    
-return true;    
-}    
+  // Этот метод слишком длинный и делает слишком много    
+  public bool ValidateUser(string username, string email, string phone, int age)    
+  {    
+    // Проверка имени    
+    if (string.IsNullOrEmpty(username) || username.Length > 50)    
+    {    
+      Console.WriteLine("Ошибка: Имя пользователя некорректно.");    
+      return false;    
+    }    
+  // Проверка email    
+  if (!email.Contains("@") || !email.Contains("."))    
+  {    
+    Console.WriteLine("Ошибка: Email должен содержать '@' и '.'");    
+    return false;    
+  }    
+  // Проверка телефона (упрощенная)    
+  if (phone.Length != 11 || !phone.All(char.IsDigit))    
+  {    
+    Console.WriteLine("Ошибка: Телефон должен состоять из 11 цифр.");    
+    return false;    
+  }    
+  // Проверка возраста    
+  if (age < 18 || age > 99) // "Магические числа" 18 и 99    
+  {    
+    Console.WriteLine("Ошибка: Возраст должен быть в диапазоне от 18 до 99.");    
+    return false;    
+  }    
+  Console.WriteLine("Пользователь успешно прошел валидацию!");    
+  return true;    
+  }    
 }
 
 ## Homework 22
