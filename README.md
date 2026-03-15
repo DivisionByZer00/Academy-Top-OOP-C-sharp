@@ -353,6 +353,15 @@ _messageSender.SendMessage(user.Email, $"Уважаемый {user.Name}, {messag
 }    
 }
 
+Задачи для тестирования:
+- Создайте тестовый проект xUnit и добавьте в него ссылку на основной проект и NuGet-пакет Moq.
+- Напишите тест NotifyUser_ShouldSend_WhenUserExists:
+  - Arrange: Создайте моки для IUserRepository и IMessageSender. Настройте mockUserRepository так, чтобы при вызове GetUserById с любым int он возвращал "фейкового" пользователя.
+  - Act: Вызовите метод NotifyUser.o Assert: С помощью Verify убедитесь, что метод SendMessage у mockMessageSender был вызван ровно один раз.
+- Напишите тест NotifyUser_ShouldNotSend_WhenUserNotFound:
+  - Arrange: Создайте моки. Настройте mockUserRepository так, чтобы при вызове GetUserById он возвращал null.
+  - Act: Вызовите метод NotifyUser.
+  - Assert: С помощью Verify убедитесь, что метод SendMessage у mockMessageSender никогда не был вызван (Times.Never()).
 
 
 
