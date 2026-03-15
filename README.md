@@ -316,6 +316,48 @@ Console.WriteLine($"Дата: {DateTime.Now}");
 ***Задание:*** Вам предстоит создать небольшую консольную программу и написать для нее набор unit-тестов. Вы будете тестировать класс NotificationService, который зависит от двух внешних сервисов (IUserRepository и IMessageSender).    
 Ваша главная задача — протестировать логику NotificationService в полной изоляции, используя mock-объекты (с помощью библиотеки Moq) для имитации его зависимостей.
 
-***Логика работы программы***
+***Логика работы программы***    
+Интерфейсы зависимостей: Сначала создайте два интерфейса, от которых будет зависеть ваш сервис:    
+public interface IUserRepository    
+{    
+User GetUserById(int userId);    
+}    
+public interface IMessageSender    
+{    
+void SendMessage(string recipient, string message);    
+}    
+Модель User: Простой класс для хранения данных пользователя.    
+public class User    
+{    
+public int Id { get; set; }    
+public string Name { get; set; }    
+public string Email { get; set; }    
+}    
+Класс NotificationService (System Under Test): Это основной класс, логику которого вы будете тестировать. Он принимает зависимости через конструктор.    
+public class NotificationService    
+{    
+private readonly IUserRepository _userRepository;    
+private readonly IMessageSender _messageSender;    
+public NotificationService(IUserRepository userRepository, IMessageSender messageSender)    
+{    
+_userRepository = userRepository;    
+_messageSender = messageSender;    
+}    
+public void NotifyUser(int userId, string message)    
+{    
+var user = _userRepository.GetUserById(userId);    
+if (user != null)    
+{    
+_messageSender.SendMessage(user.Email, $"Уважаемый {user.Name}, {message}");    
+}    
+}    
+}
+
+
+
+
+
+
+
 
 
