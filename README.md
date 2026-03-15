@@ -364,7 +364,43 @@ _messageSender.SendMessage(user.Email, $"Уважаемый {user.Name}, {messag
   - Assert: С помощью Verify убедитесь, что метод SendMessage у mockMessageSender никогда не был вызван (Times.Never()).
 
 
+## Homework 20
 
+### Тема: "Mock-объекты и тестирование зависимостей"
+
+***Задание:*** Вам предстоит написать набор unit-тестов для класса CrmFacade из нашего итогового проекта.    
+Ваша задача — протестировать метод RegisterNewClientWithFirstOrder в полной изоляции, используя продвинутые возможности библиотеки Moq для точной проверки взаимодействий между фасадом и его зависимостями.
+
+***Логика работы программы***    
+Вы будете тестировать уже существующий класс CrmFacade. Напомним его структуру:    
+public class CrmFacade : ICrmFacade    
+{    
+private readonly IClientWriter _clientWriter;    
+private readonly IOrderWriter _orderWriter;    
+public CrmFacade(IClientWriter clientWriter, IOrderWriter orderWriter)    
+{    
+_clientWriter = clientWriter;    
+_orderWriter = orderWriter;    
+}    
+public void RegisterNewClientWithFirstOrder(string clientName, stringclient Email, string orderDescription, decimal orderAmount)    
+{    
+var client = _clientWriter.AddClient(clientName, clientEmail);    
+_orderWriter.AddOrderForClient(client.Id, orderDescription, orderAmount);    
+}    
+}    
+
+Задачи для тестирования:
+- Создайте или используйте существующий тестовый проект xUnit с подключенными Moq и ссылкой на основной проект.
+- Напишите тест RegisterNewClient_ShouldPassCorrectData_ToClientWriter:
+  - Цель: Убедиться, что CrmFacade передает имя и email в метод AddClient без искажений.
+  - Arrange: Создайте моки для IClientWriter и IOrderWriter. Настройте mockClientWriter.Setup() так, чтобы он возвращал какой-либо Client (это важно для корректной работы метода).
+  - Act: Вызовите метод RegisterNewClientWithFirstOrder с тестовыми данными (например, "Иван" и "ivan@test.com").
+  - Assert: С помощью Verify убедитесь, что метод AddClient был вызван ровно один раз с конкретными значениями "Иван" и "ivan@test.com".
+- Напишите тест RegisterNewClient_ShouldUse_ReturnedClientId_ForOrder:
+  - Цель: Убедиться, что Id клиента, который вернул _clientWriter.AddClient(), правильно используется при создании заказа.
+  - Arrange: Создайте моки. Настройте mockClientWriter.Setup() так, чтобы при вызове AddClient он возвращал "фейкового" клиента с заранее известным Id (например, 42).
+  - Act: Вызовите метод RegisterNewClientWithFirstOrder.
+  - Assert: С помощью Verify убедитесь, что метод AddOrderForClient был вызван с clientId, равным 42.
 
 
 
