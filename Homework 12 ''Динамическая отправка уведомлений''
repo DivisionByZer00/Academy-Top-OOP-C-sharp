@@ -1,0 +1,134 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection.Metadata;
+using System.Threading.Tasks;
+using System.Xml;
+using Newtonsoft.Json;
+using Formatting = Newtonsoft.Json.Formatting;
+
+
+class Program
+{
+
+    public interface INotifier
+    {
+        void Send(string message);
+    }
+
+
+    public class Notifier : INotifier
+    {
+        public void Send(string message)
+        {
+            Console.WriteLine($"Отправка уведомления: {message}");
+        }
+    }
+
+    public abstract class NotifierDecorator : INotifier
+    {
+        protected INotifier notifier;
+
+        protected NotifierDecorator(INotifier notifier)
+        {
+            this.notifier = notifier;
+        }
+
+        public virtual void Send(string message)
+        {
+            notifier.Send(message);
+        }
+    }
+
+    public class SmsDecorator : NotifierDecorator
+    {
+        public SmsDecorator(INotifier notifier) : base(notifier)
+        {
+        }
+
+        public override void Send(string message)
+        {
+            base.Send(message);
+            Console.WriteLine($"[SMS]: {message}");
+        }
+    }
+
+
+    public class TeamsDecorator : NotifierDecorator
+    {
+        public TeamsDecorator(INotifier notifier) : base(notifier)
+        {
+        }
+
+        public override void Send(string message)
+        {
+            base.Send(message);
+            Console.WriteLine($"[MS Teams]: {message}");
+        }
+    }
+
+
+    public class SmsSender : INotifier
+    {
+        public void Send(string message)
+        {
+            Console.WriteLine($"Отправка по SMS: {message}");
+        }
+    }
+
+
+    public class EmailSender : INotifier
+    {
+        public void Send(string message)
+        {
+            Console.WriteLine($"Отправка по Email: {message}");
+        }
+    }
+
+
+
+    public static class NotificationFactory
+    {
+        public static INotifier Create(string type)
+        {
+            if (type == "sms")
+            {
+                Console.WriteLine("Создана фабрика для SMS.");
+                return new SmsSender();
+            }
+
+            Console.WriteLine("Создана фабрика для Email.");
+            return new EmailSender();
+        }
+    }
+
+
+
+    static void Main(string[] args)
+    {
+        Console.WriteLine("--- Простая отправка ---");
+        INotifier notifier = new Notifier();
+        notifier.Send("Ваш заказ #123 в обработке.");
+
+        Console.WriteLine("--- Комбинированная отправка (базовый + SMS) ---");
+        INotifier smsNotifier = new SmsDecorator(new Notifier());
+        smsNotifier.Send("Ваш заказ #456 отправлен.");
+
+        Console.WriteLine("--- Полная отправка (базовый + SMS + Teams) ---");
+        INotifier fullNotifier =
+            new TeamsDecorator(new SmsDecorator(new Notifier()));
+        fullNotifier.Send("Ваш заказ #789 доставлен.");
+
+        Console.WriteLine("------------------------------------");
+        Console.Write("Какой тип уведомлений использовать? (email/sms): ");
+        string type = Console.ReadLine();
+
+        INotifier sender = NotificationFactory.Create(type);
+
+        Console.WriteLine("Отправляем уведомление...");
+        sender.Send("Ваш заказ #123 успешно оформлен.");
+    }
+
+
+}
