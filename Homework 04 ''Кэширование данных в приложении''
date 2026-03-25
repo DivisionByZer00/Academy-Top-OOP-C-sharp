@@ -1,0 +1,77 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection.Metadata;
+using System.Threading.Tasks;
+using System.Xml;
+using Newtonsoft.Json;
+using Formatting = Newtonsoft.Json.Formatting;
+
+
+class Program
+{
+
+    public sealed class CacheService
+    {
+       
+        private static readonly CacheService instance = new CacheService();
+
+        private Dictionary<string, object> cache = new Dictionary<string, object>();
+
+        private CacheService()
+        {
+            Console.WriteLine("(Экземпляр CacheService создан)");
+        }
+
+        public static CacheService Instance
+        {
+            get
+            {
+                return instance;
+            }
+        }
+
+
+        public void Add(string key, object value)
+        {
+            cache[key] = value;
+            Console.WriteLine($"Данные '{key}' добавлены.");
+        }
+
+
+        public object Get(string key)
+        {
+            object value;
+
+            if (cache.TryGetValue(key, out value))
+            {
+                return value;
+            }
+            else
+            {
+                return null;
+            }
+        }
+    }
+
+    static void Main(string[] args)
+    {
+        Console.WriteLine("--- Демонстрация работы глобального кэша (Singleton) ---");
+
+
+        var cache1 = CacheService.Instance;
+        var cache2 = CacheService.Instance;
+
+        Console.WriteLine("\nДобавляем данные в кэш через первую ссылку...");
+        cache1.Add("ConnectionString", "Server=.;Database=CacheDB;");
+        cache1.Add("ApiKey", "XYZ12345ABC");
+
+        Console.WriteLine("\nПолучаем данные из кэша через ВТОРУЮ ссылку...");
+        Console.WriteLine("Значение по ключу 'ConnectionString': " + cache2.Get("ConnectionString"));
+        Console.WriteLine("Значение по ключу 'ApiKey': " + cache2.Get("ApiKey"));
+
+        Console.WriteLine("\nПроверяем, что обе переменные ссылаются на один объект...");
+        Console.WriteLine("Результат: " + object.ReferenceEquals(cache1, cache2));
+    }
+}
