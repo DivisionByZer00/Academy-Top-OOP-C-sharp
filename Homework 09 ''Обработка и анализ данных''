@@ -1,0 +1,92 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection.Metadata;
+using System.Threading.Tasks;
+using System.Xml;
+using Newtonsoft.Json;
+using static Program.DataProcessor;
+using Formatting = Newtonsoft.Json.Formatting;
+
+
+class Program
+{
+    public abstract class DataProcessor
+    {
+
+        protected int recordsCount;
+
+        public void Process()
+        {
+            ReadData();
+            ParseData();
+            AnalyzeData();
+            SaveReport();
+        }
+
+
+
+        protected abstract void ReadData();
+        protected abstract void ParseData();
+
+
+        protected virtual void AnalyzeData()
+        {
+            Console.WriteLine($"[Анализ]: Анализ данных... Найдено {recordsCount} записей.");
+        }
+
+        protected virtual void SaveReport()
+        {
+            Console.WriteLine($"[Сохранение]: Отчет сохранен в консоль. Результат: {recordsCount} записей обработано.");
+        }
+
+        public class CsvDataProcessor : DataProcessor
+        {
+            protected override void ReadData()
+            {
+                Console.WriteLine("[Чтение]: Чтение сырых данных из CSV...");
+            }
+
+            protected override void ParseData()
+            {
+                Console.WriteLine("[Парсинг]: Парсинг CSV данных...");
+                recordsCount = 2;
+            }
+        }
+
+        public class XmlDataProcessor : DataProcessor
+        {
+            protected override void ReadData()
+            {
+                Console.WriteLine("[Чтение]: Чтение сырых данных из XML...");
+            }
+
+            protected override void ParseData()
+            {
+                Console.WriteLine("[Парсинг]: Парсинг XML данных...");
+                recordsCount = 3;
+            }
+        }
+
+
+
+    }
+
+
+
+    static void Main(string[] args)
+    {
+        Console.WriteLine("--- Запуск обработчика CSV данных ---");
+        DataProcessor csv = new CsvDataProcessor();
+        csv.Process();
+
+        Console.WriteLine();
+
+        Console.WriteLine("--- Запуск обработчика XML данных ---");
+        DataProcessor xml = new XmlDataProcessor();
+        xml.Process();
+    }
+
+
+}
