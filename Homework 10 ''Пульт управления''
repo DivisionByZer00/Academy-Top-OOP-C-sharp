@@ -1,0 +1,149 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection.Metadata;
+using System.Threading.Tasks;
+using System.Xml;
+using Newtonsoft.Json;
+using Formatting = Newtonsoft.Json.Formatting;
+
+
+class Program
+{
+    public interface ICommand
+    {
+        void Execute();
+    }
+
+    public class Light
+    {
+        public void TurnOn()
+        {
+            Console.WriteLine("Свет включен.");
+        }
+
+        public void TurnOff()
+        {
+            Console.WriteLine("Свет выключен.");
+        }
+    }
+
+
+    public class Stereo
+    {
+        public void TurnOn()
+        {
+            Console.WriteLine("Стереосистема включена.");
+        }
+
+        public void SetVolume(int volume)
+        {
+            Console.WriteLine($"Громкость установлена на {volume}.");
+        }
+
+        public void TurnOff()
+        {
+            Console.WriteLine("Стереосистема выключена.");
+        }
+    }
+
+
+    public class LightOnCommand : ICommand
+    {
+        private Light lightLamp;
+
+        public LightOnCommand(Light light)
+        {
+            this.lightLamp = light;
+        }
+
+        public void Execute()
+        {
+            lightLamp.TurnOn();
+        }
+    }
+
+    public class LightOffCommand : ICommand
+    {
+        private Light lightLamp;
+
+        public LightOffCommand(Light light)
+        {
+            this.lightLamp = light;
+        }
+
+        public void Execute()
+        {
+            lightLamp.TurnOff();
+        }
+    }
+
+
+    public class StereoOnWithCDCommand : ICommand
+    {
+        private Stereo stereoCD;
+
+        public StereoOnWithCDCommand(Stereo stereo)
+        {
+            this.stereoCD = stereo;
+        }
+
+        public void Execute()
+        {
+            stereoCD.TurnOn();
+            Console.WriteLine("Установлен режим CD.");
+            stereoCD.SetVolume(10);
+        }
+    }
+
+
+    public class RemoteControl
+    {
+        private ICommand command;
+
+        public void SetCommand(ICommand newCommand)
+        {
+            command = newCommand;
+        }
+
+        public void PressButton()
+        {
+            if (command != null)
+            {
+                Console.WriteLine("Нажимаем кнопку...");
+                command.Execute();
+            }
+        }
+    }
+
+
+
+    static void Main(string[] args)
+    {
+        Console.WriteLine("--- Настройка пульта управления ---\n");
+
+        RemoteControl remote = new RemoteControl();
+
+        Light light = new Light();
+        Stereo stereo = new Stereo();
+
+        Console.WriteLine("Программируем кнопку на включение света...");
+        remote.SetCommand(new LightOnCommand(light));
+        remote.PressButton();
+
+        Console.WriteLine();
+
+        Console.WriteLine("Программируем кнопку на включение стереосистемы...");
+        remote.SetCommand(new StereoOnWithCDCommand(stereo));
+        remote.PressButton();
+
+        Console.WriteLine();
+
+        Console.WriteLine("Программируем кнопку на выключение света...");
+        remote.SetCommand(new LightOffCommand(light));
+        remote.PressButton();
+    }
+
+
+}
