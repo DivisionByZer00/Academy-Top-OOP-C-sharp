@@ -1,0 +1,113 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection.Metadata;
+using System.Threading.Tasks;
+using System.Xml;
+using Newtonsoft.Json;
+using Formatting = Newtonsoft.Json.Formatting;
+
+
+class Program
+{
+    public interface IRenderer
+    {
+        void RenderCircle(int radius);
+        void RenderSquare(int side);
+    }
+
+    public class VectorRenderer : IRenderer
+    {
+        public void RenderCircle(int radius)
+        {
+            Console.WriteLine($"Рисуем векторный круг с радиусом {radius}");
+        }
+
+        public void RenderSquare(int side)
+        {
+            Console.WriteLine($"Рисуем векторный квадрат со стороной {side}");
+        }
+    }
+
+    public class RasterRenderer : IRenderer
+    {
+        public void RenderCircle(int radius)
+        {
+            Console.WriteLine($"Рисуем растровый круг как набор пикселей с радиусом {radius}");
+        }
+
+        public void RenderSquare(int side)
+        {
+            Console.WriteLine($"Рисуем растровый квадрат как набор пикселей со стороной {side}");
+        }
+    }
+
+
+
+    public abstract class Shape
+    {
+        protected IRenderer renderer;
+
+        protected Shape(IRenderer renderer)
+        {
+            this.renderer = renderer;
+        }
+
+        public abstract void Draw();
+    }
+
+    public class Circle : Shape
+    {
+        private int _radius;
+
+        public Circle(IRenderer renderer, int radius) : base(renderer)
+        {
+            _radius = radius;
+        }
+
+        public override void Draw()
+        {
+            renderer.RenderCircle(_radius);
+        }
+    }
+
+    public class Square : Shape
+    {
+        private int _side;
+
+        public Square(IRenderer renderer, int side) : base(renderer)
+        {
+            _side = side;
+        }
+
+        public override void Draw()
+        {
+            renderer.RenderSquare(_side);
+        }
+    }
+
+
+
+    static void Main(string[] args)
+    {
+        Console.WriteLine("--- Демонстрация работы паттерна Мост ---\n");
+
+        IRenderer vectorRenderer = new VectorRenderer();
+        IRenderer rasterRenderer = new RasterRenderer();
+
+        Console.WriteLine("Отрисовка векторного круга:");
+        Shape vectorCircle = new Circle(vectorRenderer, 5);
+        vectorCircle.Draw();
+
+        Console.WriteLine("\nОтрисовка растрового квадрата:");
+        Shape rasterSquare = new Square(rasterRenderer, 10);
+        rasterSquare.Draw();
+
+        Console.WriteLine("\nОтрисовка растрового круга:");
+        Shape rasterCircle = new Circle(rasterRenderer, 5);
+        rasterCircle.Draw();
+    }
+
+
+}
