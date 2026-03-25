@@ -1,0 +1,103 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection.Metadata;
+using System.Threading.Tasks;
+using System.Xml;
+using Newtonsoft.Json;
+using Formatting = Newtonsoft.Json.Formatting;
+
+
+class Program
+{
+
+    public interface IOrganizationComponent
+    {
+        decimal GetSalary();
+    }
+
+
+    public class Employee : IOrganizationComponent
+    {
+        public string Name { get; }
+        private decimal salary;
+
+        public Employee(string name, decimal salary)
+        {
+            Name = name;
+            this.salary = salary;
+        }
+
+        public decimal GetSalary()
+        {
+            return salary;
+        }
+    }
+
+
+    public class Department : IOrganizationComponent
+    {
+        public string Name { get; }
+        private List<IOrganizationComponent> components = new();
+
+        public Department(string name)
+        {
+            Name = name;
+        }
+
+        public void Add(IOrganizationComponent component)
+        {
+            components.Add(component);
+        }
+
+        public decimal GetSalary()
+        {
+            decimal total = 0;
+
+            foreach (var component in components)
+            {
+                total += component.GetSalary();
+            }
+
+            return total;
+        }
+    }
+
+
+
+
+
+    static void Main(string[] args)
+    {
+        Console.WriteLine("--- Расчет фонда заработной платы ---\n");
+
+        Console.WriteLine("Создаем структуру компании...\n");
+
+
+        Employee dev1 = new Employee("Иван Петров", 150000);
+        Employee dev2 = new Employee("Алексей Смирнов", 170000);
+        Employee sales1 = new Employee("Мария Иванова", 180000);
+
+
+        Department devDepartment = new Department("Отдел Разработки");
+        devDepartment.Add(dev1);
+        devDepartment.Add(dev2);
+
+
+        Department salesDepartment = new Department("Отдел Продаж");
+        salesDepartment.Add(sales1);
+
+
+        Department company = new Department("Компания");
+        company.Add(devDepartment);
+        company.Add(salesDepartment);
+
+
+        Console.WriteLine($"Зарплата программиста '{dev1.Name}': {dev1.GetSalary()}");
+        Console.WriteLine($"Общий фонд зарплаты отдела '{devDepartment.Name}': {devDepartment.GetSalary()}");
+        Console.WriteLine($"Общий фонд заработной платы всей компании: {company.GetSalary()}");
+    }
+
+
+}
