@@ -1,0 +1,91 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection.Metadata;
+using System.Threading.Tasks;
+using System.Xml;
+using Newtonsoft.Json;
+using Formatting = Newtonsoft.Json.Formatting;
+
+
+class Program
+{
+    public interface IMessageSender
+    {
+        void Send(string message);
+    }
+
+
+    public class EmailSender : IMessageSender
+    {
+        public void Send(string message)
+        {
+            Console.WriteLine("Отправка по Email: " + message);
+        }
+    }
+
+
+    public class SmsSender : IMessageSender
+    {
+        public void Send(string message)
+        {
+            Console.WriteLine("Отправка по Sms: " + message);
+        }
+    }
+
+    public abstract class NotificationServiceFactory
+    {
+        public abstract IMessageSender CreateSender();
+    }
+
+
+    public class EmailNotificationFactory : NotificationServiceFactory
+    {
+        public override IMessageSender CreateSender()
+        {
+            Console.WriteLine("Создана фабрика для Email.");
+            return new EmailSender();
+        }
+    }
+
+    public class SmsNotificationFactory : NotificationServiceFactory
+    {
+        public override IMessageSender CreateSender()
+        {
+            Console.WriteLine("Создана фабрика для SMS.");
+            return new SmsSender();
+        }
+    }
+
+
+
+
+    static void Main(string[] args)
+    {
+        Console.WriteLine("--- Гибкая система уведомлений ---\n");
+
+        Console.Write("Какой тип уведомлений использовать? (email/sms): ");
+        string choice = Console.ReadLine();
+
+        NotificationServiceFactory factory;
+
+        if (choice == "email")
+        {
+            factory = new EmailNotificationFactory();
+        }
+        else
+        {
+            factory = new SmsNotificationFactory();
+        }
+
+        IMessageSender sender = factory.CreateSender();
+
+        Console.WriteLine("Отправляем уведомление...");
+        sender.Send("Ваш заказ #123 успешно оформлен.");
+
+        Console.WriteLine();
+    }
+
+
+}
