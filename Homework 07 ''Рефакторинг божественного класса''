@@ -1,0 +1,103 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection.Metadata;
+using System.Threading.Tasks;
+using System.Xml;
+using Newtonsoft.Json;
+using Formatting = Newtonsoft.Json.Formatting;
+
+
+class Program
+{
+    public class OrderValidator
+    {
+        public bool Validate(string itemName, int quantity)
+        {
+            if (string.IsNullOrEmpty(itemName))
+            {
+                Console.WriteLine("Ошибка: Название товара не может быть пустым.");
+                return false;
+            }
+
+            if (quantity <= 0)
+            {
+                Console.WriteLine("Ошибка: Количество должно быть больше нуля.");
+                return false;
+            }
+
+            Console.WriteLine("Заказ прошел валидацию.");
+            return true;
+        }
+    }
+
+    public class OrderRepository
+    {
+        public void Save(string itemName, int quantity)
+        {
+            File.WriteAllText("order.txt", $"Товар: {itemName}, Количество: {quantity}");
+            Console.WriteLine("Заказ сохранен в файл.");
+        }
+    }
+
+    public class NotificationService
+    {
+        public void Send()
+        {
+            Console.WriteLine("Отправка email-уведомления: 'Ваш заказ принят'.");
+        }
+    }
+
+    public class OrderProcessor
+    {
+        private readonly OrderValidator validator;
+        private readonly OrderRepository repository;
+        private readonly NotificationService notificationSer;
+
+        public OrderProcessor()
+        {
+            validator = new OrderValidator();
+            repository = new OrderRepository();
+            notificationSer = new NotificationService();
+        }
+
+        public void ProcessOrder(string itemName, int quantity)
+        {
+            if (validator.Validate(itemName, quantity) == false)
+            {
+                return;
+            }
+
+            repository.Save(itemName, quantity);
+            notificationSer.Send();
+        }
+    }
+
+    static void Main(string[] args)
+    {
+        OrderProcessor processor = new OrderProcessor();
+
+        Console.WriteLine("--- Обработка нового заказа ---");
+        Console.Write("Введите название товара: ");
+        string itemName = Console.ReadLine();
+
+        Console.Write("Введите количество: ");
+        int quantity = int.Parse(Console.ReadLine());
+
+        Console.WriteLine();
+        processor.ProcessOrder(itemName, quantity);
+
+        Console.WriteLine("\n--- Попытка обработки некорректного заказа ---");
+        Console.Write("Введите название товара: ");
+        itemName = Console.ReadLine();
+
+        Console.Write("Введите количество: ");
+        quantity = int.Parse(Console.ReadLine());
+
+        Console.WriteLine();
+        processor.ProcessOrder(itemName, quantity);
+    }
+
+
+}
