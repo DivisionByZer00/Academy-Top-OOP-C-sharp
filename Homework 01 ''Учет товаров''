@@ -1,0 +1,69 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Xml;
+using Newtonsoft.Json;
+using Formatting = Newtonsoft.Json.Formatting;
+
+
+
+class Program
+{
+    public record Product(int Id, string Name, double Price);
+
+    public class Inventory
+    {
+        private List<Product> products = new List<Product>();
+
+        public void AddProduct(Product product)
+        {
+            products.Add(product);
+            Console.WriteLine($"Добавлен товар: {product}");
+        }
+
+        public Product FindProduct(int id)
+        {
+            foreach (var product in products)
+            {
+                if (product.Id == id)
+                    return product;
+            }
+            return null;
+        }
+    }
+
+
+    static void Main()
+    {
+        Console.WriteLine("--- Управление инвентарем ---\n");
+
+        Inventory inventory = new Inventory();
+
+
+        inventory.AddProduct(new Product(1, "Молоко", 80.50));
+        inventory.AddProduct(new Product(2, "Хлеб", 40.00));
+        inventory.AddProduct(new Product(3, "Сыр", 450.99));
+
+        Console.WriteLine();
+
+        Console.WriteLine("--- Поиск товара с ID 2 ---");
+        var found = inventory.FindProduct(2);
+
+        if (found != null)
+            Console.WriteLine($"Найден товар: {found}");
+        else
+            Console.WriteLine("Товар не найден.");
+
+        Console.WriteLine();
+
+        Console.WriteLine("--- Поиск товара с ID 99 ---");
+        var notFound = inventory.FindProduct(99);
+
+        if (notFound != null)
+            Console.WriteLine($"Найден товар: {notFound}");
+        else
+            Console.WriteLine("Товар с ID 99 не найден.");
+    }
+}
