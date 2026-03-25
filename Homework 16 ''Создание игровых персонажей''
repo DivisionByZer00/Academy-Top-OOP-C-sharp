@@ -1,0 +1,143 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection.Metadata;
+using System.Threading.Tasks;
+using System.Xml;
+using Newtonsoft.Json;
+using Formatting = Newtonsoft.Json.Formatting;
+
+
+class Program
+{
+    public class Character
+    {
+        public string Name { get; private set; }
+        public string Race { get; private set; }
+        public string Class { get; private set; }
+        public string Weapon { get; private set; }
+        public string Armor { get; private set; }
+
+        private Character() { }
+
+        public override string ToString()
+        {
+            return $"Имя: {Name}, Раса: {Race}, Класс: {Class}, Оружие: {Weapon}, Броня: {Armor}";
+        }
+
+        internal static Character Create()
+        {
+            return new Character();
+        }
+
+        internal void SetName(string name) => Name = name;
+        internal void SetRace(string race) => Race = race;
+        internal void SetClass(string characterClass) => Class = characterClass;
+        internal void SetWeapon(string weapon) => Weapon = weapon;
+        internal void SetArmor(string armor) => Armor = armor;
+    }
+
+
+    public interface ICharacterBuilder
+    {
+        void SetName(string name);
+        void SetRace(string race);
+        void SetClass(string characterClass);
+        void SetWeapon(string weapon);
+        void SetArmor(string armor);
+
+        Character GetResult();
+    }
+
+    public class CharacterBuilder : ICharacterBuilder
+    {
+        private Character _character;
+
+        public CharacterBuilder()
+        {
+            Reset();
+        }
+
+        private void Reset()
+        {
+            _character = Character.Create();
+        }
+
+        public void SetName(string name) => _character.SetName(name);
+        public void SetRace(string race) => _character.SetRace(race);
+        public void SetClass(string characterClass) => _character.SetClass(characterClass);
+        public void SetWeapon(string weapon) => _character.SetWeapon(weapon);
+        public void SetArmor(string armor) => _character.SetArmor(armor);
+
+        public Character GetResult()
+        {
+            Character result = _character;
+            Reset();
+            return result;
+        }
+    }
+
+
+    public class CharacterDirector
+    {
+        private ICharacterBuilder _builder;
+
+        public CharacterDirector(ICharacterBuilder builder)
+        {
+            _builder = builder;
+        }
+
+        public Character ConstructWarrior()
+        {
+            _builder.SetName("Гром");
+            _builder.SetRace("Человек");
+            _builder.SetClass("Воин");
+            _builder.SetWeapon("Меч");
+            _builder.SetArmor("Латная");
+
+            return _builder.GetResult();
+        }
+
+        public Character ConstructMage()
+        {
+            _builder.SetName("Лиара");
+            _builder.SetRace("Эльф");
+            _builder.SetClass("Маг");
+            _builder.SetWeapon("Посох");
+            _builder.SetArmor("Мантия");
+
+            return _builder.GetResult();
+        }
+    }
+
+
+
+    static void Main(string[] args)
+    {
+        Console.WriteLine("--- Система создания персонажей ---\n");
+
+        ICharacterBuilder builder = new CharacterBuilder();
+        CharacterDirector director = new CharacterDirector(builder);
+
+        Console.WriteLine("Создание стандартного Воина-Человека через Директора...");
+        Character warrior = director.ConstructWarrior();
+        Console.WriteLine($"Создан персонаж: {warrior}\n");
+
+        Console.WriteLine("Создание стандартного Мага-Эльфа через Директора...");
+        Character mage = director.ConstructMage();
+        Console.WriteLine($"Создан персонаж: {mage}\n");
+
+        Console.WriteLine("Создание кастомного персонажа (Разбойник-Орк)...");
+        builder.SetName("Гронак");
+        builder.SetRace("Орк");
+        builder.SetClass("Разбойник");
+        builder.SetWeapon("Кинжалы");
+        builder.SetArmor("Кожаная");
+
+        Character custom = builder.GetResult();
+        Console.WriteLine($"Создан персонаж: {custom}");
+    }
+
+
+}
