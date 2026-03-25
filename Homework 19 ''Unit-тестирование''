@@ -1,0 +1,83 @@
+// Program.cs
+
+public interface IUserRepository
+{
+    User GetUserById(int userId);
+}
+public interface IMessageSender
+{
+    void SendMessage(string recipient, string message);
+}
+public class User
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public string Email { get; set; }
+}
+public class NotificationService
+{
+    private readonly IUserRepository _userRepository;
+    private readonly IMessageSender _messageSender;
+    public NotificationService(IUserRepository userRepository, IMessageSender
+   messageSender)
+    {
+        _userRepository = userRepository;
+        _messageSender = messageSender;
+    }
+    public void NotifyUser(int userId, string message)
+    {
+        var user = _userRepository.GetUserById(userId);
+        if (user != null)
+        {
+            _messageSender.SendMessage(user.Email, $"Уважаемый {user.Name}, {message}");
+        }
+    }
+}
+
+// UnitTest1.cs
+using Moq;
+using Xunit;
+
+public class NotificationServiceTests
+{
+    [Fact]
+    public void NotifyUser_ShouldSend_WhenUserExists()
+    {
+        // Arrange
+        var mockUserRepository = new Mock<IUserRepository>();
+        var mockMessageSender = new Mock<IMessageSender>();
+
+        mockUserRepository.Setup(repo => repo.GetUserById(It.IsAny<int>())).Returns(new User
+            {
+                Id = 1,
+                Name = "Иван",
+                Email = "ivan@test.com"
+            });
+
+        var service = new NotificationService(mockUserRepository.Object,mockMessageSender.Object);
+
+        // Act
+        service.NotifyUser(1, "ваш заказ готов");
+
+        // Assert
+        mockMessageSender.Verify(sender => sender.SendMessage(It.IsAny<string>(),It.IsAny<string>()),Times.Once());
+    }
+
+    [Fact]
+    public void NotifyUser_ShouldNotSend_WhenUserNotFound()
+    {
+        // Arrange
+        var mockUserRepository = new Mock<IUserRepository>();
+        var mockMessageSender = new Mock<IMessageSender>();
+
+        mockUserRepository.Setup(repo => repo.GetUserById(It.IsAny<int>())).Returns((User)null);
+
+        var service = new NotificationService(mockUserRepository.Object,mockMessageSender.Object);
+
+        // Act
+        service.NotifyUser(1, "ваш заказ готов");
+
+        // Assert
+        mockMessageSender.Verify(sender => sender.SendMessage(It.IsAny<string>(),It.IsAny<string>()),Times.Never());
+    }
+}
