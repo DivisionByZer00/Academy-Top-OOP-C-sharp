@@ -1,0 +1,79 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection.Metadata;
+using System.Threading.Tasks;
+using System.Xml;
+using Newtonsoft.Json;
+using Formatting = Newtonsoft.Json.Formatting;
+
+
+class Program
+{
+    public class BIOS
+    {
+        public void Execute()
+        {
+            Console.WriteLine("[BIOS]: Выполнение POST...");
+        }
+    }
+
+    public class HardwareChecks
+    {
+        public void CheckMemory()
+        {
+            Console.WriteLine("[Hardware]: Проверка оперативной памяти...");
+        }
+
+        public void CheckDrives()
+        {
+            Console.WriteLine("[Hardware]: Проверка жестких дисков...");
+        }
+    }
+
+
+    public class OperatingSystem
+    {
+        public void Load()
+        {
+            Console.WriteLine("[OS]: Загрузка операционной системы...");
+        }
+    }
+
+    public class ComputerFacade
+    {
+        private BIOS bios;
+        private HardwareChecks hardware;
+        private OperatingSystem os;
+
+        public ComputerFacade()
+        {
+            bios = new BIOS();
+            hardware = new HardwareChecks();
+            os = new OperatingSystem();
+        }
+
+
+        public void Start()
+        {
+            Console.WriteLine("--- Запуск компьютера через Фасад ---\n");
+
+            bios.Execute();
+            hardware.CheckMemory();
+            hardware.CheckDrives();
+            os.Load();
+
+            Console.WriteLine("\n--- Компьютер успешно запущен ---");
+        }
+    }
+
+
+    static void Main(string[] args)
+    {
+        ComputerFacade computer = new ComputerFacade();
+        computer.Start();
+    }
+
+
+}
