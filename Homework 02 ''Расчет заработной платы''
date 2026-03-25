@@ -1,0 +1,76 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Xml;
+using Newtonsoft.Json;
+using Formatting = Newtonsoft.Json.Formatting;
+
+
+class Program
+{
+
+    public class Employee
+    {
+        public string Name { get; set; }
+        public int BaseSalary { get; set; }
+
+        public Employee() {}
+        public Employee(string name, int baseSalary)
+        {
+            Name = name;
+            BaseSalary = baseSalary;
+        }
+
+        public double CalculateMonthlySalary()
+        {
+            return BaseSalary;
+        }
+    }
+
+    public class Manager : Employee
+    {
+        public int Bonus { get; set; }
+
+        public Manager(string name, int baseSalary, int bonus)
+        {
+            Name = name;
+            BaseSalary = baseSalary;
+            Bonus = bonus;
+        }
+
+        public double CalculateManagerSalary()
+        {
+            return BaseSalary + Bonus;
+        }
+    }
+
+    public class Developer : Employee
+    {
+        public int LinesOfCodeWritten { get; set; }
+
+        public Developer(string name, int baseSalary, int loc)
+        {
+            Name = name;
+            BaseSalary = baseSalary;
+            LinesOfCodeWritten = loc;
+        }
+
+        public double CalculateDeveloperSalary()
+        {
+            return BaseSalary + LinesOfCodeWritten * 1.5;
+        }
+    }
+
+    static void Main()
+    {
+        Manager manager = new Manager("Иван Петров", 90000, 15000);
+        Developer developer = new Developer("Анна Сидорова", 80000, 10000);
+        Manager manager2 = new Manager("Олег Васильев", 100000, 30000);
+
+        Console.WriteLine($"Менеджер: {manager.Name}, зарплата: {manager.CalculateManagerSalary()}");
+        Console.WriteLine($"Разработчик: {developer.Name}, зарплата: {developer.CalculateDeveloperSalary()}");
+        Console.WriteLine($"Менеджер: {manager2.Name}, зарплата: {manager2.CalculateManagerSalary()}");
+    }
+}
