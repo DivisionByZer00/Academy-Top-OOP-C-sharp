@@ -1,0 +1,90 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection.Metadata;
+using System.Threading.Tasks;
+using System.Xml;
+using Newtonsoft.Json;
+using Formatting = Newtonsoft.Json.Formatting;
+
+
+class Program
+{
+    class Book
+    {
+        public string Title { get; }
+
+        public Book(string title)
+        {
+            Title = title;
+        }
+    }
+    class Member
+    {
+        public string Name { get; }
+
+        public Member(string name)
+        {
+            Name = name;
+        }
+    }
+    class Loan
+    {
+        public Book Book { get; }
+        public Member Member { get; }
+        public DateTime Date { get; }
+
+        public Loan(Book book, Member member)
+        {
+            Book = book;
+            Member = member;
+            Date = DateTime.Now;
+        }
+    }
+    class Library
+    {
+        public Loan IssueBook(Book book, Member member)
+        {
+            Console.WriteLine($"Читатель {member.Name} взял книгу '{book.Title}'");
+            return new Loan(book, member);
+        }
+    }
+
+    class LoanPrinter
+    {
+        public void Print(Loan loan)
+        {
+            Console.WriteLine("\n--- Информация о выдаче ---");
+            Console.WriteLine($"Книга: {loan.Book.Title}");
+            Console.WriteLine($"Выдана читателю: {loan.Member.Name}");
+            Console.WriteLine($"Дата: {loan.Date}");
+        }
+    }
+
+    class LibraryController
+    {
+        public void Process()
+        {
+            Console.WriteLine("--- Процесс выдачи книги ---");
+
+            Book book1 = new Book("Война и мир");
+            Book book2 = new Book("Преступление и наказание"); 
+            Member member = new Member("Иван");
+
+            Library library = new Library();
+            Loan loan = library.IssueBook(book1, member);
+
+            LoanPrinter printer = new LoanPrinter();
+            printer.Print(loan);
+        }
+    }
+
+    static void Main(string[] args)
+    {
+        LibraryController controller = new LibraryController();
+        controller.Process();
+    }
+
+
+}
