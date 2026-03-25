@@ -1,0 +1,92 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection.Metadata;
+using System.Threading.Tasks;
+using System.Xml;
+using Newtonsoft.Json;
+using Formatting = Newtonsoft.Json.Formatting;
+
+
+class Program
+{
+    public interface ITextPlugin
+    {
+        string Process(string input); 
+    }
+
+    public class ToUpperPlugin : ITextPlugin
+    {
+        public string Process(string input)
+        {
+            return input.ToUpper();
+        }
+    }
+
+    public class SpaceRemoverPlugin : ITextPlugin
+    {
+        public string Process(string input)
+        {
+            return input.Replace(" ", "");
+        }
+    }
+
+
+    public class ReversePlugin : ITextPlugin
+    {
+        public string Process(string input)
+        {
+            char[] chars = input.ToCharArray();
+            Array.Reverse(chars);
+            return new string(chars);
+        }
+    }
+
+
+    public class TextProcessor
+    {
+        public string ProcessText(string input, List<ITextPlugin> plugins)
+        {
+            string result = input;
+
+            foreach (var plugin in plugins)
+            {
+                result = plugin.Process(result);
+            }
+
+            return result;
+        }
+    }
+
+
+    static void Main(string[] args)
+    {
+        Console.WriteLine("--- Система обработки текста на плагинах ---");
+        Console.WriteLine();
+
+        string text = "Hello World! This is a test.";
+
+        Console.WriteLine("Исходная строка: " + text + "\n");
+
+        var plugins = new List<ITextPlugin>
+        {
+            new ToUpperPlugin(),
+            new SpaceRemoverPlugin(),
+            new ReversePlugin()
+        };
+
+        Console.WriteLine("Примененные плагины:");
+        Console.WriteLine("  - ToUpperPlugin");
+        Console.WriteLine("  - SpaceRemoverPlugin");
+        Console.WriteLine("  - ReversePlugin");
+        Console.WriteLine();
+
+        TextProcessor processor = new TextProcessor();
+        string result = processor.ProcessText(text, plugins);
+
+        Console.WriteLine("Результат после обработки: " + result);
+    }
+
+
+}
